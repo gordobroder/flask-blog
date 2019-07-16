@@ -1,5 +1,5 @@
 from flask import (render_template, url_for, flash,
-                   redirect, request, Blueprint)
+                   redirect, request, abort, Blueprint)
 from flask_login import current_user, login_required
 from flaskblog import db
 from flaskblog.models import Post
@@ -12,7 +12,7 @@ posts = Blueprint('posts', __name__)
 @login_required
 def new_post():
     form = PostForm()
-    if form.validade_on_submit():
+    if form.validate_on_submit():
         post = Post(title=form.title.data, content=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
@@ -35,7 +35,7 @@ def update_post(post_id):
     if post.author != current_user:
         abort(403)
     form = PostForm()
-    if form.validade_on_submit():
+    if form.validate_on_submit():
         post.title = form.title.data
         post.content = form.content.data
         db.session.commit()
